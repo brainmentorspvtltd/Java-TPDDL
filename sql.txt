@@ -1,0 +1,76 @@
+SQL Commands
+
+Primary Key
+CREATE TABLE users(
+   user_id INT AUTO_INCREMENT PRIMARY KEY,
+   username VARCHAR(40),
+   password VARCHAR(255),
+status varchar(1) default ‘Y’
+  
+);
+	
+
+Foreign Key
+
+create table user_group_mapping (user_group_id int auto_increment primary key, user_id int, group_id int, foreign key(user_id) references users(user_id) ON DELETE CASCADE, foreign key(group_id) references groups(group_id) ON DELETE CASCADE, status varchar(1) default 'Y' );
+
+
+Change AutoIncrement Start Number
+ALTER TABLE <TableName> AUTO_INCREMENT = 1000
+
+
+Authentication and Authorisation System Scripts
+
+User Table
+
+create table users(user_id int auto_increment primary key, userid varchar(50) , pwd varchar(50));
+insert into users (userid,pwd) values('ram','ram123');
+
+
+Role Table
+create table role(role_id int auto_increment primary key, name varchar(50),status varchar(1) default 'Y');
+insert into role (name) values('TEACHER');
+insert into role (name) values('STUDENT');
+insert into role (name) values('ADMIN');
+
+Group Table
+create table groups(group_id int auto_increment primary key, name varchar(50),status varchar(1) default 'Y');
+insert into groups (name) values('GroupA');
+ insert into groups (name) values('GroupB');
+ insert into groups (name) values('GroupC’);
+
+Rights Table
+create table rights(right_id int auto_increment primary key, name varchar(50), screen varchar(255) ,status varchar(1) default 'Y');
+insert into rights (name,screen) values('Add Test','addtest.jsp');
+insert into rights (name,screen) values('Add Course','addcourse.jsp');
+insert into rights (name,screen) values('Take Test','taketest.jsp');
+insert into rights (name,screen) values('Score','score.jsp');
+
+User Group Mapping Table
+create table user_group_mapping (user_group_id int auto_increment primary key, user_id int, group_id int, foreign key(user_id) references users(user_id) ON DELETE CASCADE, foreign key(group_id) references groups(group_id) ON DELETE CASCADE, status varchar(1) default 'Y' );
+
+
+Group Role Mapping Table
+create table group_role_mapping (group_role_id int auto_increment primary key, role_id int, group_id int, foreign key(role_id) references role(role_id) ON DELETE CASCADE, foreign key(group_id) references groups(group_id) ON DELETE CASCADE, status varchar(1) default 'Y' );
+
+Role Right Mapping Table
+create table role_right_mapping (role_right_id int auto_increment primary key, role_id int, right_id int, foreign key(role_id) references role(role_id) ON DELETE CASCADE, foreign key(right_id) references rights(right_id) ON DELETE CASCADE, status varchar(1) default 'Y' );
+
+
+User Group Mapping Data
+insert into user_group_mapping (user_id,group_id) values(1,1);
+insert into user_group_mapping (user_id,group_id) values(2,2);
+
+
+Group Role Mapping Data
+insert into group_role_mapping(group_id,role_id) values(1,1);
+insert into group_role_mapping(group_id,role_id) values(1,3);
+
+Role Right Mapping Data
+insert into role_right_mapping(role_id,right_id) values(1,1);
+insert into role_right_mapping(role_id,right_id) values(1,2);
+insert into role_right_mapping(role_id,right_id) values(1,3);
+
+
+JOIN Query
+select users.userid , role.name as 'rolename', rights.name as 'rightname' , groups.name as 'gname' from users,role,rights,groups,user_group_mapping,group_role_mapping,role_right_mapping where users.user_id=user_group_mapping.user_id and groups.group_id=user_group_mapping.group_id and role.role_id=group_role_mapping.role_id and groups.group_id=group_role_mapping.group_id and rights.right_id=role_right_mapping.right_id and role.role_id=role_right_mapping.role_id;
